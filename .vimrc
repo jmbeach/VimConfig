@@ -14,7 +14,6 @@ Plugin 'valloric/youcompleteme'
 Plugin 'davidhalter/jedi-vim'
 Plugin 'vim-scripts/Scheme-Mode'
 Plugin 'pangloss/vim-javascript'
-Plugin 'maksimr/vim-jsbeautify'
 Plugin 'scrooloose/nerdtree'
 Plugin 'tyru/open-browser.vim'
 Plugin 'tpope/vim-commentary'
@@ -22,27 +21,16 @@ Plugin 'marciomazza/vim-brogrammer-theme'
 Plugin 'dylon/vim-antlr'
 Plugin 'agilecreativity/vim_printer'
 Plugin 'christoomey/vim-system-copy'
-Plugin 'alpaca-tc/beautify.vim'
 Plugin 'mattn/jscomplete-vim'
 Plugin 'AlessandroYorba/Sierra'
 Plugin 'breuckelen/vim-resize'
+Plugin 'mkitt/browser-refresh.vim'
+Plugin 'tpope/vim-dispatch.git'
+Plugin 'digitaltoad/vim-pug'
+Plugin 'tpope/vim-jdaddy'
+Plugin 'michalliu/jsruntime.vim'
+Plugin 'alpaca-tc/beautify.vim'
 
-" The following are examples of different formats supported.
-" Keep Plugin commands between vundle#begin/end.
-" plugin on GitHub repo
-"Plugin 'tpope/vim-fugitive'
-" plugin from http://vim-scripts.org/vim/scripts.html
-"Plugin 'L9'
-" Git plugin not hosted on GitHub
-"Plugin 'git://git.wincent.com/command-t.git'
-" git repos on your local machine (i.e. when working on your own plugin)
-"Plugin 'file:///home/gmarik/path/to/plugin'
-" The sparkup vim script is in a subdirectory of this repo called vim.
-" Pass the path to set the runtimepath properly.
-"Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
-" Install L9 and avoid a Naming conflict if you've already installed a
-" different version somewhere else.
-"Plugin 'ascenator/L9', {'name': 'newL9'}
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -62,9 +50,9 @@ syntax on
 set number
 set ignorecase
 
-set tabstop=4
-set shiftwidth=4
-set softtabstop=4
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
 set backspace=indent,eol,start
 map <C-n> :NERDTreeToggle<CR>
 " colorscheme brogrammer
@@ -76,6 +64,7 @@ autocmd Filetype html setlocal ts=2 sts=2 sw=2
 autocmd Filetype scheme setlocal ts=2 sts=2 sw=2
 autocmd Filetype markdown setlocal ts=2 sts=2 sw=2
 autocmd Filetype css setlocal ts=2 sts=2 sw=2
+autocmd Filetype jade setlocal ts=2 sts=2 sw=2
 let g:sierra_Campfire = 1
 colorscheme sierra
 let g:vim_resize_disable_auto_mappings = 1
@@ -83,3 +72,20 @@ map <s-h> :CmdResizeLeft<cr>
 map <s-up> :CmdResizeDown<cr>
 map <s-k> :CmdResizeUp<cr>
 map <s-l> :CmdResizeRight<cr>
+" set listchars+=space:·,tab:>-	
+" set list
+command! -nargs=1 Silent
+			\ | execute ':silent !'.<q-args>
+			\ | execute ':redraw!'
+
+map <C-x> :w \| Silent make && chrome-cli reload<cr>
+map <C-b> :w \| Silent make open<cr>
+
+" File association
+autocmd BufNewFile,BufRead *.scm set syntax=scam
+" Don't autocomment
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+autocmd FileType javascript map <buffer> <c-b> :Beautify js-beautify<cr>
+autocmd FileType html map <buffer> <c-b> :Beautify html-beautify<cr>
+autocmd FileType css map <buffer> <c-b> :Beautify css-beautify<cr>
