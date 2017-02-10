@@ -31,9 +31,9 @@ Plugin 'tpope/vim-dispatch.git'
 Plugin 'digitaltoad/vim-pug'
 Plugin 'tpope/vim-jdaddy'
 Plugin 'michalliu/jsruntime.vim'
-Plugin 'alpaca-tc/beautify.vim'
-Plugin 'Chiel92/vim-autoformat'
 Plugin 'PProvost/vim-ps1'
+Plugin 'johnbradley/vim-fix-xml'
+Plugin 'jmbeach/sql-caps.vim'
 " enable youcompleteme only for specific filetypes
 " Comment this on initial install
 autocmd FileType c++ Bundle 'Valloric/YouCompleteMe'
@@ -42,6 +42,11 @@ autocmd FileType python Bundle 'Valloric/YouCompleteMe'
 autocmd FileType css Bundle 'Valloric/YouCompleteMe'
 autocmd FileType jade Bundle 'Valloric/YouCompleteMe'
 autocmd FileType html Bundle 'Valloric/YouCompleteMe'
+autocmd FileType make Bundle 'Valloric/YouCompleteMe'
+autocmd FileType ps1 Bundle 'Valloric/YouCompleteMe'
+autocmd FileType javascript Bundle 'Valloric/YouCompleteMe'
+autocmd FileType js Bundle 'Valloric/YouCompleteMe'
+
 
 
 " All of your Plugins must be added before the following line
@@ -97,9 +102,14 @@ set backspace=indent,eol,start
 autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
 autocmd Filetype html setlocal ts=2 sts=2 sw=2
 autocmd Filetype scheme setlocal ts=2 sts=2 sw=2
-autocmd Filetype markdown setlocal ts=2 sts=2 sw=2
+autocmd Filetype markdown setlocal ts=4 sts=4 sw=4
 autocmd Filetype css setlocal ts=2 sts=2 sw=2
 autocmd Filetype jade setlocal ts=2 sts=2 sw=2
+autocmd Filetype sql setlocal ts=4
+
+" -------------- Font Settings --------------------
+
+set guifont=Consolas:h11:cANSI
 
 
 " -------------- Key Mapping ----------------------
@@ -110,14 +120,17 @@ map <C-n> :NERDTreeToggle<CR>
 map <c-f> :call JsBeautify()<cr>
 au BufRead,BufNewFile *.g set filetype=antlr3
 au BufRead,BufNewFile *.g4 set filetype=antlr4
+autocmd Filetype markdown :setlocal spell spelllang=en_us
+" Map ctrl + s to save
+map <c-s> :w<cr>
 
 " ## Vim Resize Mappings
 
 " Shift + vim direction resizes window
-map <s-h> :CmdResizeLeft<cr>
-map <s-up> :CmdResizeDown<cr>
-map <s-k> :CmdResizeUp<cr>
-map <s-l> :CmdResizeRight<cr>
+map <s-left> :CmdResizeLeft<cr>
+map <s-down> :CmdResizeDown<cr>
+map <s-up> :CmdResizeUp<cr>
+map <s-right> :CmdResizeRight<cr>
 
 
 
@@ -127,7 +140,46 @@ autocmd FileType html map <buffer> <c-b> :Beautify html-beautify<cr>
 autocmd FileType css map <buffer> <c-b> :Beautify css-beautify<cr>Î
 
 " Switching windows with shift and arrow
-nmap <silent> <s-Up> :wincmd k<CR>
-nmap <silent> <s-Down> :wincmd j<CR>
-nmap <silent> <s-Left> :wincmd h<CR>
-nmap <silent> <s-Right> :wincmd l<CR>
+nmap <silent> <c-k> :wincmd k<CR>
+nmap <silent> <c-j> :wincmd j<CR>
+nmap <silent> <c-h> :wincmd h<CR>
+nmap <silent> <c-l> :wincmd l<CR>
+
+" -------------- Functions -----------------------
+
+function SetEncodingUTF16LittleEndian()
+	:e ++enc=utf16le
+endfunction
+
+function SetEncodingUTF8()
+	:e ++enc=utf8
+	:set encoding=utf-8
+endfunction
+
+
+function FixXML()
+  "save and run xmllint on our file saving output
+  let tempfile = tempname()
+  exec "sav! " . tempfile
+  let outfile = tempname()
+	let command = "C:\\cygwin\\bin\\xmllint.exe --format " . tempfile . " > " . outfile . " && C:\\cygwin\\bin\\echo.exe -n %errorlevel%"
+  let result = system(command)
+	echo result
+  if result == "0" 
+		"delete everything
+		1,$delete
+		"replace it with the result of xmllint
+		exec "read ++edit" . outfile
+		"delete the blank line at the top
+		1,1delete
+		redraw!
+  else
+		let clean_result = substitute(result, tempfile, "Error", 'g')
+		echo clean_result
+  endif
+endfunction
+
+" -------------- Aliases ------------------------
+
+" format xml
+:command FX :call FixXML()
