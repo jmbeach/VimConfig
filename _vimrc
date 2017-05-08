@@ -27,13 +27,25 @@ Plugin 'mattn/jscomplete-vim'
 Plugin 'AlessandroYorba/Sierra'
 Plugin 'breuckelen/vim-resize'
 Plugin 'mkitt/browser-refresh.vim'
-Plugin 'tpope/vim-dispatch.git'
+Plugin 'tpope/vim-dispatch'
 Plugin 'digitaltoad/vim-pug'
 Plugin 'tpope/vim-jdaddy'
 Plugin 'michalliu/jsruntime.vim'
 Plugin 'PProvost/vim-ps1'
 Plugin 'johnbradley/vim-fix-xml'
+Plugin 'mattn/webapi-vim'
+Plugin 'cd01/poshcomplete-vim'
+Plugin 'vim-scripts/SQLComplete.vim'
+Plugin 'vim-syntastic/syntastic'
+" C# IDE like functions for VIM
+Plugin 'OmniSharp/omnisharp-vim'
+" show completions on TAB instead of <c-n>
+Plugin 'ervandew/supertab'
+
+" capitalizes SQL keywords
 Plugin 'jmbeach/sql-caps.vim'
+" Allows editing of .doc files
+Plugin 'vim-scripts/textutil.vim'
 " enable youcompleteme only for specific filetypes
 " Comment this on initial install
 autocmd FileType c++ Bundle 'Valloric/YouCompleteMe'
@@ -43,14 +55,23 @@ autocmd FileType css Bundle 'Valloric/YouCompleteMe'
 autocmd FileType jade Bundle 'Valloric/YouCompleteMe'
 autocmd FileType html Bundle 'Valloric/YouCompleteMe'
 autocmd FileType make Bundle 'Valloric/YouCompleteMe'
-autocmd FileType ps1 Bundle 'Valloric/YouCompleteMe'
 autocmd FileType javascript Bundle 'Valloric/YouCompleteMe'
 autocmd FileType js Bundle 'Valloric/YouCompleteMe'
+autocmd FileType cs Bundle 'Valloric/YouCompleteMe'
+if !exists('g:PoshComplete_Port')
+    let g:PoshComplete_Port = '1234'
+endif
+autocmd FileType ps1 setlocal omnifunc=poshcomplete#CompleteCommand
 
+autocmd FileType ps1 :call poshcomplete#StartServer()
 
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
+
+call plug#begin()
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+call plug#end()
 filetype plugin indent on    " required
 " To ignore plugin indent changes, instead use:
 "filetype plugin on
@@ -81,6 +102,8 @@ syntax on
 set number
 " Ignore case when searching
 set ignorecase
+" Use Windows file format by default (since you're on windows)
+set ff=dos
 
 " Don't autocomment
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
@@ -106,6 +129,7 @@ autocmd Filetype markdown setlocal ts=4 sts=4 sw=4
 autocmd Filetype css setlocal ts=2 sts=2 sw=2
 autocmd Filetype jade setlocal ts=2 sts=2 sw=2
 autocmd Filetype sql setlocal ts=4
+autocmd Filetype cs setlocal ts=4 sts=4 sw=4 tabstop=4 shiftwidth=4 softtabstop=4
 
 " -------------- Font Settings --------------------
 
@@ -145,6 +169,9 @@ nmap <silent> <c-j> :wincmd j<CR>
 nmap <silent> <c-h> :wincmd h<CR>
 nmap <silent> <c-l> :wincmd l<CR>
 
+" Toggle paste with F10
+set pastetoggle=<F10>
+
 " -------------- Functions -----------------------
 
 function SetEncodingUTF16LittleEndian()
@@ -183,3 +210,57 @@ endfunction
 
 " format xml
 :command FX :call FixXML()
+
+" -------------- Configure Syntastic ------------
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+" C# OmniSharp syntax checker
+let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
+
+" -------------- Configure OmniSharp ------------
+
+augroup omnisharp_commands
+    autocmd!
+
+    " Synchronous build (blocks Vim)
+    "autocmd FileType cs nnoremap <F5> :wa!<cr>:OmniSharpBuild<cr>
+    " Builds can also run asynchronously with vim-dispatch installed
+    autocmd FileType cs nnoremap <leader>b :wa!<cr>:OmniSharpBuildAsync<cr>
+    " automatic syntax check on events (TextChanged requires Vim 7.4)
+    autocmd BufEnter,TextChanged,InsertLeave *.cs SyntasticCheck
+
+    " Automatically add new cs files to the nearest project on save
+    autocmd BufWritePost *.cs call OmniSharp#AddToProject()
+
+    "show type information automatically when the cursor stops moving
+    autocmd CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
+
+    "The following commands are contextual, based on the current cursor position.
+
+    autocmd FileType cs nnoremap gd :OmniSharpGotoDefinition<cr>
+    autocmd FileType cs nnoremap <leader>fi :OmniSharpFindImplementations<cr>
+    autocmd FileType cs nnoremap <leader>ft :OmniSharpFindType<cr>
+    autocmd FileType cs nnoremap <leader>fs :OmniSharpFindSymbol<cr>
+    autocmd FileType cs nnoremap <leader>fu :OmniSharpFindUsages<cr>
+    "finds members in the current buffer
+    autocmd FileType cs nnoremap <leader>fm :OmniSharpFindMembers<cr>
+    " cursor can be anywhere on the line containing an issue
+    autocmd FileType cs nnoremap <leader>x  :OmniSharpFixIssue<cr>
+    autocmd FileType cs nnoremap <leader>fx :OmniSharpFixUsings<cr>
+    autocmd FileType cs nnoremap <leader>tt :OmniSharpTypeLookup<cr>
+    autocmd FileType cs nnoremap <leader>dc :OmniSharpDocumentation<cr>
+    "navigate up by method/property/field
+    autocmd FileType cs nnoremap <C-K> :OmniSharpNavigateUp<cr>
+    "navigate down by method/property/field
+    autocmd FileType cs nnoremap <C-J> :OmniSharpNavigateDown<cr>
+
+augroup END
+
