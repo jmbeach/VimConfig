@@ -1,3 +1,4 @@
+
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
@@ -10,7 +11,6 @@ call vundle#begin('$USERPROFILE/vimfiles/bundle/')
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'suan/vim-instant-markdown'
 " Uncomment this on initial install
 "Plugin 'valloric/youcompleteme'
 Plugin 'davidhalter/jedi-vim'
@@ -41,6 +41,11 @@ Plugin 'vim-syntastic/syntastic'
 Plugin 'OmniSharp/omnisharp-vim'
 " show completions on TAB instead of <c-n>
 Plugin 'ervandew/supertab'
+" better markdown support in vim
+Plugin 'reedes/vim-pencil'
+Plugin 'suan/vim-instant-markdown'
+" Makes docs show up nicely
+Plugin 'Shougo/echodoc.vim'
 
 " capitalizes SQL keywords
 Plugin 'jmbeach/sql-caps.vim'
@@ -90,7 +95,22 @@ filetype plugin indent on    " required
 
 " ---------------- Color Schemes --------------------
 
-" colorscheme brogrammer
+" -------------- Configure Mouse -------------------
+
+" scroll wheel
+if !has("gui_running")
+    set term=xterm
+		set t_Co=256
+		let &t_AB="\e[48;5;%dm"
+		let &t_AF="\e[38;5;%dm"
+    set mouse=a
+    set nocompatible
+    inoremap <Esc>[62~ <C-X><C-E>
+    inoremap <Esc>[63~ <C-X><C-Y>
+    nnoremap <Esc>[62~ <C-E>
+    nnoremap <Esc>[63~ <C-Y>
+		colorscheme sierra
+endif
 
 
 
@@ -129,7 +149,8 @@ autocmd Filetype markdown setlocal ts=4 sts=4 sw=4
 autocmd Filetype css setlocal ts=2 sts=2 sw=2
 autocmd Filetype jade setlocal ts=2 sts=2 sw=2
 autocmd Filetype sql setlocal ts=4
-autocmd Filetype cs setlocal ts=4 sts=4 sw=4 tabstop=4 shiftwidth=4 softtabstop=4
+autocmd Filetype cs setlocal ts=4 sts=4 sw=4 expandtab
+autocmd Filetype py setlocal ts=4 sts=4 sw=4 tabstop=4 shiftwidth=4 softtabstop=4
 
 " -------------- Font Settings --------------------
 
@@ -224,11 +245,15 @@ let g:syntastic_check_on_wq = 0
 
 " C# OmniSharp syntax checker
 let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
+let g:syntastic_py_checkers = ['pylint']
 
 " -------------- Configure OmniSharp ------------
 
 augroup omnisharp_commands
     autocmd!
+
+		" move preview window to bottom of screen so it doesn't move code
+		set splitbelow
 
     " Synchronous build (blocks Vim)
     "autocmd FileType cs nnoremap <F5> :wa!<cr>:OmniSharpBuild<cr>
@@ -241,7 +266,7 @@ augroup omnisharp_commands
     autocmd BufWritePost *.cs call OmniSharp#AddToProject()
 
     "show type information automatically when the cursor stops moving
-    autocmd CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
+    autocmd CursorHold *.cs call OmniSharp#TypeLookupWithDocumentation()
 
     "The following commands are contextual, based on the current cursor position.
 
@@ -263,4 +288,17 @@ augroup omnisharp_commands
     autocmd FileType cs nnoremap <C-J> :OmniSharpNavigateDown<cr>
 
 augroup END
+
+" -------------- Configure Pencil ------------------
+
+augroup pencil
+  autocmd!
+  autocmd FileType markdown,mkd call pencil#init()
+  autocmd FileType text         call pencil#init()
+augroup END
+
+" --------------- Configure Markdown Preview -------
+
+"let g:instant_markdown_autostart=0
+
 
