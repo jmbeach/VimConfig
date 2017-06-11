@@ -1,4 +1,3 @@
-
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
@@ -39,18 +38,20 @@ Plugin 'vim-scripts/SQLComplete.vim'
 Plugin 'vim-syntastic/syntastic'
 " C# IDE like functions for VIM
 Plugin 'OmniSharp/omnisharp-vim'
-" show completions on TAB instead of <c-n>
-Plugin 'ervandew/supertab'
 " better markdown support in vim
 Plugin 'reedes/vim-pencil'
 Plugin 'suan/vim-instant-markdown'
 " Makes docs show up nicely
 Plugin 'Shougo/echodoc.vim'
+" Required for code snippets from Omnisharp
+Plugin 'SirVer/ultisnips'
 
 " capitalizes SQL keywords
 Plugin 'jmbeach/sql-caps.vim'
 " Allows editing of .doc files
 Plugin 'vim-scripts/textutil.vim'
+" TCL shell for vim
+Plugin 'LStinson/TclShell-Vim'
 " enable youcompleteme only for specific filetypes
 " Comment this on initial install
 autocmd FileType c++ Bundle 'Valloric/YouCompleteMe'
@@ -110,6 +111,9 @@ if !has("gui_running")
     nnoremap <Esc>[62~ <C-E>
     nnoremap <Esc>[63~ <C-Y>
 		colorscheme sierra
+		inoremap <Char-0x07F> <BS>
+		nnoremap <Char-0x07F> <BS>
+		set mouse-=a
 endif
 
 
@@ -127,6 +131,8 @@ set ff=dos
 
 " Don't autocomment
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+
+autocmd FileType sd set syntax=tcl
 
 
 " --------------- Vim Resize Settings -------------
@@ -150,6 +156,8 @@ autocmd Filetype css setlocal ts=2 sts=2 sw=2
 autocmd Filetype jade setlocal ts=2 sts=2 sw=2
 autocmd Filetype sql setlocal ts=4
 autocmd Filetype cs setlocal ts=4 sts=4 sw=4 expandtab
+autocmd Filetype cs inoremap <Char-0x07F> <BS>
+autocmd Filetype cs	nnoremap <Char-0x07F> <BS>
 autocmd Filetype py setlocal ts=4 sts=4 sw=4 tabstop=4 shiftwidth=4 softtabstop=4
 
 " -------------- Font Settings --------------------
@@ -242,6 +250,7 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+let g:syntastic_loc_list_height = 5
 
 " C# OmniSharp syntax checker
 let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
@@ -266,7 +275,7 @@ augroup omnisharp_commands
     autocmd BufWritePost *.cs call OmniSharp#AddToProject()
 
     "show type information automatically when the cursor stops moving
-    autocmd CursorHold *.cs call OmniSharp#TypeLookupWithDocumentation()
+    "autocmd CursorHold *.cs call OmniSharp#TypeLookupWithDocumentation()
 
     "The following commands are contextual, based on the current cursor position.
 
@@ -287,6 +296,9 @@ augroup omnisharp_commands
     "navigate down by method/property/field
     autocmd FileType cs nnoremap <C-J> :OmniSharpNavigateDown<cr>
 
+		let g:OmniSharp_typeLookupInPreview=1
+		let g:omnicomplete_fetch_documentation=1
+
 augroup END
 
 " -------------- Configure Pencil ------------------
@@ -301,4 +313,10 @@ augroup END
 
 "let g:instant_markdown_autostart=0
 
+" --------------- Configure EchoDoc ----------------
 
+set cmdheight=2
+
+" --------------- Configure UltiSnips --------------
+
+let g:UltiSnipsExpandTrigger="<NUL>"
