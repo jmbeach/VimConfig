@@ -1,7 +1,12 @@
+" File: _vimrc
+" Author: Jared Beach
+" Description: My vimrc
+" Last Modified: June 30, 2017
+
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
-" ------------------- Vundle ------------------------
+" --------------------------------------------------- Vundle ---------------------------------------------------
 " set the runtime path to include Vundle and initialize
 set rtp+=$HOME/vimfiles/bundle/Vundle.vim/
 call vundle#begin('$USERPROFILE/vimfiles/bundle/')
@@ -23,7 +28,6 @@ Plugin 'dylon/vim-antlr'
 Plugin 'agilecreativity/vim_printer'
 Plugin 'christoomey/vim-system-copy'
 Plugin 'mattn/jscomplete-vim'
-Plugin 'AlessandroYorba/Sierra'
 Plugin 'breuckelen/vim-resize'
 Plugin 'mkitt/browser-refresh.vim'
 Plugin 'tpope/vim-dispatch'
@@ -36,22 +40,36 @@ Plugin 'mattn/webapi-vim'
 Plugin 'cd01/poshcomplete-vim'
 Plugin 'vim-scripts/SQLComplete.vim'
 Plugin 'vim-syntastic/syntastic'
+" scrollbar
+Plugin 'gcavallanti/vim-noscrollbar'
+" Show soft tabs
+Plugin 'Yggdroot/indentLine'
 " C# IDE like functions for VIM
 Plugin 'OmniSharp/omnisharp-vim'
 " better markdown support in vim
 Plugin 'reedes/vim-pencil'
+" TOC generator for markdown files
+Plugin 'mzlogin/vim-markdown-toc'
 Plugin 'suan/vim-instant-markdown'
 " Makes docs show up nicely
 Plugin 'Shougo/echodoc.vim'
 " Required for code snippets from Omnisharp
+"  a snippet engine
 Plugin 'SirVer/ultisnips'
+" snippets for vim
+Plugin 'honza/vim-snippets'
+" Paste into md
+Plugin 'andrew749/vim-bufpaste'
 
 " capitalizes SQL keywords
 Plugin 'jmbeach/sql-caps.vim'
-" Allows editing of .doc files
-Plugin 'vim-scripts/textutil.vim'
-" TCL shell for vim
-Plugin 'LStinson/TclShell-Vim'
+
+" ----------------------------------------------- Themes ------------------------------------------------
+Plugin 'vim-scripts/mayansmoke'
+Plugin 'AlessandroYorba/Sierra'
+Plugin 'lifepillar/vim-wwdc17-theme'
+" XML folds
+" Plugin 'vim-scripts/XML-Folding'
 " enable youcompleteme only for specific filetypes
 " Comment this on initial install
 autocmd FileType c++ Bundle 'Valloric/YouCompleteMe'
@@ -100,20 +118,22 @@ filetype plugin indent on    " required
 
 " scroll wheel
 if !has("gui_running")
-    set term=xterm
-		set t_Co=256
-		let &t_AB="\e[48;5;%dm"
-		let &t_AF="\e[38;5;%dm"
-    set mouse=a
-    set nocompatible
-    inoremap <Esc>[62~ <C-X><C-E>
-    inoremap <Esc>[63~ <C-X><C-Y>
-    nnoremap <Esc>[62~ <C-E>
-    nnoremap <Esc>[63~ <C-Y>
-		colorscheme sierra
-		inoremap <Char-0x07F> <BS>
-		nnoremap <Char-0x07F> <BS>
-		set mouse-=a
+	set term=xterm
+	set t_Co=256
+	let &t_AB="\e[48;5;%dm"
+	let &t_AF="\e[38;5;%dm"
+	"set mouse=a
+	set nocompatible
+	inoremap <Esc>[62~ <C-X>4<C-E>
+	inoremap <Esc>[63~ <C-X>4<C-Y>
+	nnoremap <Esc>[62~ 4<C-E>
+	nnoremap <Esc>[63~ 4<C-Y>
+	" colorscheme mayansmoke
+	colorscheme sierra
+	" colorscheme vim-wwdc17-theme
+	inoremap <Char-0x07F> <BS>
+	nnoremap <Char-0x07F> <BS>
+	" set mouse-=a
 endif
 
 
@@ -126,13 +146,10 @@ syntax on
 set number
 " Ignore case when searching
 set ignorecase
-" Use Windows file format by default (since you're on windows)
-set ff=dos
 
 " Don't autocomment
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 
-autocmd FileType sd set syntax=tcl
 
 
 " --------------- Vim Resize Settings -------------
@@ -151,7 +168,7 @@ set backspace=indent,eol,start
 autocmd Filetype javascript setlocal ts=2 sts=2 sw=2
 autocmd Filetype html setlocal ts=2 sts=2 sw=2
 autocmd Filetype scheme setlocal ts=2 sts=2 sw=2
-autocmd Filetype markdown setlocal ts=4 sts=4 sw=4
+autocmd Filetype markdown setlocal ts=2 sts=2 sw=2 expandtab
 autocmd Filetype css setlocal ts=2 sts=2 sw=2
 autocmd Filetype jade setlocal ts=2 sts=2 sw=2
 autocmd Filetype sql setlocal ts=4
@@ -159,13 +176,15 @@ autocmd Filetype cs setlocal ts=4 sts=4 sw=4 expandtab
 autocmd Filetype cs inoremap <Char-0x07F> <BS>
 autocmd Filetype cs	nnoremap <Char-0x07F> <BS>
 autocmd Filetype py setlocal ts=4 sts=4 sw=4 tabstop=4 shiftwidth=4 softtabstop=4
+autocmd Filetype tcl setlocal expandtab
+autocmd Filetype sd setlocal expandtab
 
 " -------------- Font Settings --------------------
 
 set guifont=Consolas:h11:cANSI
 
 
-" -------------- Key Mapping ----------------------
+" -------------- Keys Mapping ----------------------
 
 " Show/hide nerd tree on ctrl + n
 map <C-n> :NERDTreeToggle<CR>
@@ -255,6 +274,8 @@ let g:syntastic_loc_list_height = 5
 " C# OmniSharp syntax checker
 let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
 let g:syntastic_py_checkers = ['pylint']
+"let g:syntastic_tcl_nagelfar_exec='tclsh c:/tcl/nagelfar.tcl'
+let g:syntastic_tcl_checkers = ['nagelfar']
 
 " -------------- Configure OmniSharp ------------
 
@@ -311,7 +332,7 @@ augroup END
 
 " --------------- Configure Markdown Preview -------
 
-"let g:instant_markdown_autostart=0
+let g:instant_markdown_autostart=0
 
 " --------------- Configure EchoDoc ----------------
 
@@ -320,3 +341,27 @@ set cmdheight=2
 " --------------- Configure UltiSnips --------------
 
 let g:UltiSnipsExpandTrigger="<NUL>"
+
+" --------------- TCL -----------------------------
+" Treat sd as tcl
+au BufRead,BufNewFile *.sd set ft=tcl
+autocmd FileType sd set syntax=tcl
+autocmd FileType sd set nowrap
+
+" -------------- Increase scroll ------------------
+:map <F8> :noremap j 3j <CR> :noremap k 3k <CR>
+:map <S-F8> :noremap j j <CR> :noremap k k <CR>
+
+" -------------- Srollbar -------------------------
+set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %{noscrollbar#statusline()}
+" display statusline always
+:set laststatus=2
+ 
+" ---------------- Ultisnips
+let g:UltiSnipsExpandTrigger="<c-e>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
+set rtp+=$HOME/vimfiles/bundle/vim-snippets
