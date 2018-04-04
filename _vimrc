@@ -3,7 +3,6 @@
 " File: _vimrc
 " Author: Jared Beach
 " Description: My vimrc
-" Last Modified: July 08, 2017
 " --------------------------------------------------
 " --------------------------------------------------
 
