@@ -487,4 +487,10 @@ augroup textobj_quote
   autocmd FileType text call textobj#quote#init({'educate': 0})
 augroup END
 
+" ==================================================
+"  dbext
+" ==================================================
+
 source $HOME/vimfiles/myscripts/load_connections.vim
+let g:dbext_default_SQLSRV_cmd_options = '-w 10000 -r -b -n -y 10'
+let g:dbext_default_SQLSRV_bin = 'sqlcmd'
