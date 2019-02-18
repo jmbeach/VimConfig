@@ -50,6 +50,8 @@ Plugin 'reedes/vim-pencil'
 Plugin 'tpope/vim-dispatch'
 " Allow plugins to talk to eachother
 Plugin 'Shougo/unite.vim'
+" Better column increment
+Plugin 'triglav/vim-visual-increment'
 
 " --------------------
 "  C# Plugins
