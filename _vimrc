@@ -84,7 +84,7 @@ Plugin 'PProvost/vim-ps1'
 " Capitalize sql keywords
 Plugin 'jmbeach/sql-caps.vim'
 " SSMS-like capabilities
-Plugin 'vim-scripts/dbext.vim'
+Plugin 'jmbeach/dbext.vim'
 
 " --------------------
 "  HTML Plugins
