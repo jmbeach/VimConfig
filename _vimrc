@@ -168,6 +168,8 @@ set ignorecase
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 " show folds
 let g:indentLine_char = '|'
+" set number formats for visual increment https://github.com/triglav/vim-visual-increment/blob/master/doc/visual-increment.txt
+set nrformats=alpha
 " ==================================================
 "  Key Mapping Region
 " ==================================================
